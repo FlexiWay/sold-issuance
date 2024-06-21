@@ -22,6 +22,8 @@ export const useSold = () => {
     const [poolManager, setPoolManager] = useState<PoolManager | null>(null);
     const [reset, setReset] = useState(0);
     const allowedWallets: (string | Uint8Array)[] = [];
+    const [userBalancePUSD, setUserBalancePUSD] = useState(0);
+    const [userBalanceUSDC, setUserBalanceUSDC] = useState(0);
 
     const [statCardData, setStatCardData] = useState<{
         totalSupply: number;
@@ -102,6 +104,27 @@ export const useSold = () => {
     //         refetch()
     //     }
     // }
+
+ 
+
+    const getUserBalances = async () => {
+        if (!tokenManager || !poolManager) {
+            throw new Error("Token manager or pool manager not found");
+        }
+
+        const userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.mint });
+        const userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint });
+
+        const userBaseAtaAcc = await safeFetchToken(umi, userBase);
+        const userQuoteAtaAcc = await safeFetchToken(umi, userQuote);
+
+        setUserBalancePUSD(userBaseAtaAcc ? bigIntToFloat(userBaseAtaAcc.amount, tokenManager.mintDecimals) : 0);
+        setUserBalanceUSDC(userQuoteAtaAcc ? bigIntToFloat(userQuoteAtaAcc.amount, tokenManager.quoteMintDecimals) : 0);
+    }
+
+       useEffect(() => {
+        getUserBalances();
+    }, [tokenManager, poolManager]);
 
     const handleDepositFunds = async (e: any) => {
         e.preventDefault();
@@ -233,5 +256,5 @@ export const useSold = () => {
         setLoading(false);
     };
 
-    return { tokenManager, poolManager, refetch, loading, statCardData, handleDepositFunds, amount, setAmount, handleWithdrawFunds };
+    return { tokenManager, poolManager, refetch, loading, statCardData, handleDepositFunds, userBalancePUSD, userBalanceUSDC , amount, setAmount, handleWithdrawFunds };
 };

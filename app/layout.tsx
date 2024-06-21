@@ -21,7 +21,7 @@ const fontSans = Inter({
 const APP_NAME = "Parity Issuance Portal";
 const APP_DEFAULT_TITLE = "Parity Issuance Portal";
 const APP_TITLE_TEMPLATE = "%s - Parity Issuance Portal";
-const APP_DESCRIPTION = "Parity Issuance Portal is a platform to mint and redeem your xSOLD tokens.";
+const APP_DESCRIPTION = "Parity Issuance Portal is a platform to mint and redeem your pUSD tokens.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

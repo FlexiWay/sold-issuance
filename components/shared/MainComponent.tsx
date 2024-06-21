@@ -6,12 +6,13 @@ import MyMultiButton from './MyMultiButton'
 import Image from 'next/image'
 import { useSold } from '@/hooks/useSold'
 import { Spin } from 'antd'
+import { CiWallet } from "react-icons/ci";
 
 export default function MainComponent() {
   const wallet = useWallet()
   const [leftTab, setLeftTab] = useState(true)
 
-  const { handleDepositFunds, handleWithdrawFunds, amount, setAmount, loading } = useSold()
+  const { handleDepositFunds, handleWithdrawFunds, amount, setAmount, loading, userBalancePUSD, userBalanceUSDC } = useSold()
 
   const handleAmountChange = (event: { target: { value: any } }) => {
     setAmount(parseFloat(event.target.value));
@@ -47,7 +48,29 @@ export default function MainComponent() {
             leftTab ? <form className="w-full flex flex-col items-center justify-start gap-6 p-6 py-8">
               {/* from */}
               <div className="w-full flex flex-col items-start justify-start gap-2">
-                <span className='text-xs'>FROM</span>
+                <div className="w-full flex items-center justify-between">
+                  <span className='text-xs'>FROM</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-full flex items-center justify-center opacity-50 gap-1">
+                      <CiWallet className='w-3 h-3' />
+                      <span className='text-[10px]'>{userBalanceUSDC.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        className="rounded-2xl uppercase bg-opacity-10 bg-white border border-opacity-20 border-white hover:border-brand-secondary hover:border-opacity-40 hover:text-brand-secondary text-[8px] text-opacity-40 hover:text-opacity-100 px-2"
+                        onClick={(e) => { e.preventDefault(); setAmount(userBalanceUSDC / 2); }}
+                      >
+                        half
+                      </button>
+                      <button
+                        className="rounded-2xl uppercase bg-opacity-10 bg-white border border-opacity-20 border-white hover:border-brand-secondary hover:border-opacity-40 hover:text-brand-secondary text-[8px] text-opacity-40 hover:text-opacity-100 px-2"
+                        onClick={(e) => { e.preventDefault(); setAmount(userBalanceUSDC); }}
+                      >
+                        max
+                      </button>
+                    </div>
+                  </div>
+                </div>
                 <div className="relative w-full flex items-center justify-start">
                   <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
                   <input
@@ -64,7 +87,13 @@ export default function MainComponent() {
               </div>
               {/* to */}
               <div className="w-full flex flex-col items-start justify-start gap-2">
-                <span className='text-xs'>TO</span>
+                <div className="w-full flex items-center justify-between">
+                  <span className='text-xs'>TO</span>
+                  <div className="w-full flex items-center justify-end opacity-50 gap-1">
+                    <CiWallet className='w-3 h-3' />
+                    <span className='text-[10px]'>{userBalancePUSD.toLocaleString()}</span>
+                  </div>
+                </div>
                 <div className="relative w-full flex items-center justify-start">
                   <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
                   <input
@@ -74,7 +103,7 @@ export default function MainComponent() {
                     placeholder='100'
                     value={amount}
                   />
-                  <span className='absolute top-1/2 -translate-y-1/2 right-6'>xSOLD</span>
+                  <span className='absolute top-1/2 -translate-y-1/2 right-6'>pUSD</span>
                 </div>
               </div>
 
@@ -83,7 +112,7 @@ export default function MainComponent() {
                 {/* price */}
                 <div className="w-full flex items-center justify-between">
                   <span className='text-xs uppercase'>Price</span>
-                  <span className='text-xs '>1 xSOLD PER USDC</span>
+                  <span className='text-xs '>1 pUSD PER USDC</span>
                 </div>
                 {/* slippage tolerance */}
                 <div className="w-full flex items-center justify-between">
@@ -93,7 +122,7 @@ export default function MainComponent() {
                 {/* minimum received */}
                 <div className="w-full flex items-center justify-between">
                   <span className='text-xs uppercase'>Minimum received</span>
-                  <span className='text-xs '>{amount} xSOLD</span>
+                  <span className='text-xs '>{amount} pUSD</span>
                 </div>
                 {/* swap fee */}
                 <div className="w-full flex items-center justify-between">
@@ -123,9 +152,31 @@ export default function MainComponent() {
                 <form className="w-full flex flex-col items-center justify-start gap-6 p-6 py-8">
                   {/* from */}
                   <div className="w-full flex flex-col items-start justify-start gap-2">
-                    <span className='text-xs'>FROM</span>
+                    <div className="w-full flex items-center justify-between">
+                      <span className='text-xs'>FROM</span>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-full flex items-center justify-center opacity-50 gap-1">
+                          <CiWallet className='w-3 h-3' />
+                          <span className='text-[10px]'>{userBalancePUSD.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            className="rounded-2xl uppercase bg-opacity-10 bg-white border border-opacity-20 border-white hover:border-brand-secondary hover:border-opacity-40 hover:text-brand-secondary text-[8px] text-opacity-40 hover:text-opacity-100 px-2"
+                            onClick={(e) => { e.preventDefault(); setAmount(userBalancePUSD / 2); }}
+                          >
+                            half
+                          </button>
+                          <button
+                            className="rounded-2xl uppercase bg-opacity-10 bg-white border border-opacity-20 border-white hover:border-brand-secondary hover:border-opacity-40 hover:text-brand-secondary text-[8px] text-opacity-40 hover:text-opacity-100 px-2"
+                            onClick={(e) => { e.preventDefault(); setAmount(userBalancePUSD); }}
+                          >
+                            max
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                     <div className="relative w-full flex items-center justify-start">
-                      <Image width={20} height={20} src="/usdc.png" alt="xsold" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
+                      <Image width={20} height={20} src="/usdc.png" alt="pUSD" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
                       <input
                         type="number"
                         id='amount-sell'
@@ -134,12 +185,18 @@ export default function MainComponent() {
                         value={amount}
                         onChange={handleAmountChange}
                       />
-                      <span className='absolute top-1/2 -translate-y-1/2 right-6'>xSOLD</span>
+                      <span className='absolute top-1/2 -translate-y-1/2 right-6'>pUSD</span>
                     </div>
                   </div>
                   {/* to */}
                   <div className="w-full flex flex-col items-start justify-start gap-2">
-                    <span className='text-xs'>TO</span>
+                    <div className="w-full flex items-center justify-between">
+                      <span className='text-xs'>TO</span>
+                      <div className="w-full flex items-center justify-end opacity-50 gap-1">
+                        <CiWallet className='w-3 h-3' />
+                        <span className='text-[10px]'>{userBalanceUSDC.toLocaleString()}</span>
+                      </div>
+                    </div>
                     <div className="relative w-full flex items-center justify-start">
                       <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
                       <input
@@ -150,7 +207,6 @@ export default function MainComponent() {
                         value={amount}
                       />
                       <span className='absolute top-1/2 -translate-y-1/2 right-6'>USDC</span>
-
                     </div>
                   </div>
 
@@ -159,7 +215,7 @@ export default function MainComponent() {
                     {/* price */}
                     <div className="w-full flex items-center justify-between">
                       <span className='text-xs uppercase'>Price</span>
-                      <span className='text-xs '>1 USDC PER xSOLD</span>
+                      <span className='text-xs '>1 USDC PER pUSD</span>
                     </div>
                     {/* slippage tolerance */}
                     <div className="w-full flex items-center justify-between">
