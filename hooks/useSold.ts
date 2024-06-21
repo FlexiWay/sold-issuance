@@ -103,85 +103,114 @@ export const useSold = () => {
     //     }
     // }
 
-const handleDepositFunds = async (e: any) => {
-    e.preventDefault();
-    if (!tokenManager || !poolManager) {
-        throw new Error("Token manager or pool manager not found");
-    }
-
-    console.log(tokenManager.mint, tokenManager.quoteMint)
-
-    try {
-        let txBuilder = new TransactionBuilder();
-        
-        let baseMint = umi.eddsa.findPda(SOLD_ISSUANCE_PROGRAM_ID, [Buffer.from("mint")])
-        let userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: baseMint[0] })
-        let userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint })
-        let vault = findAssociatedTokenPda(umi, { owner: tokenManagerPubKey[0], mint: tokenManager.quoteMint })
-        
-        const proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
-
-        const userBaseAtaAcc = await safeFetchToken(umi, userBase)
-        const userQuoteAtaAcc = await safeFetchToken(umi, userQuote)
-
-
-        const newAmount = amount * Math.pow(10, tokenManager.mintDecimals); 
-
-        if (!userBaseAtaAcc) {
-            txBuilder = txBuilder.add(createAssociatedToken(umi, {
-                mint: baseMint,
-                owner: umi.identity.publicKey
-            }));
-        }
-
-        if (!userQuoteAtaAcc) {
-            txBuilder = txBuilder.add(createAssociatedToken(umi, {
-                mint: tokenManager.quoteMint,
-                owner: umi.identity.publicKey
-            }));
-        }
-
-        // Adjusted properties according to available ones in TokenManager
-        txBuilder = txBuilder.add(mint(umi, {
-            tokenManager: tokenManager.publicKey,
-            mint: tokenManager.mint,
-            payerMintAta: userBase,
-            quoteMint: tokenManager.quoteMint,
-            payerQuoteMintAta: userQuote,
-            associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
-            vault: vault,
-            quantity: amount ,
-            proof: proof
-        }));
-
-        console.log(txBuilder);
-
-        const resDepositFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true}, confirm: { commitment: "confirmed" } });
-        console.log(bs58.encode(resDepositFunds.signature));
-
-        toast("Deposited funds");
-        refetch();
-    } catch (error) {
-        console.error("Failed to handle deposit action:", error);
-        toast.error("Failed to handle deposit action");
-        refetch();
-    }
-}
-
-
-
-    const handleWithdrawFunds = async () => {
+    const handleDepositFunds = async (e: any) => {
+        e.preventDefault();
         if (!tokenManager || !poolManager) {
             throw new Error("Token manager or pool manager not found");
         }
 
+        // console.log(tokenManager.mint, tokenManager.quoteMint)
+        setLoading(true);
+
         try {
             let txBuilder = new TransactionBuilder();
+            
             let baseMint = umi.eddsa.findPda(SOLD_ISSUANCE_PROGRAM_ID, [Buffer.from("mint")])
             let userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: baseMint[0] })
             let userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint })
             let vault = findAssociatedTokenPda(umi, { owner: tokenManagerPubKey[0], mint: tokenManager.quoteMint })
-            let proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
+            
+            const proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
+
+            const userBaseAtaAcc = await safeFetchToken(umi, userBase)
+            const userQuoteAtaAcc = await safeFetchToken(umi, userQuote)
+
+
+            const newAmount = amount * 10**tokenManager.mintDecimals; 
+
+            if (!userBaseAtaAcc) {
+                txBuilder = txBuilder.add(createAssociatedToken(umi, {
+                    mint: baseMint,
+                    owner: umi.identity.publicKey
+                }));
+            }
+
+            if (!userQuoteAtaAcc) {
+                txBuilder = txBuilder.add(createAssociatedToken(umi, {
+                    mint: tokenManager.quoteMint,
+                    owner: umi.identity.publicKey
+                }));
+            }
+
+            // Adjusted properties according to available ones in TokenManager
+            txBuilder = txBuilder.add(mint(umi, {
+                tokenManager: tokenManager.publicKey,
+                mint: tokenManager.mint,
+                payerMintAta: userBase,
+                quoteMint: tokenManager.quoteMint,
+                payerQuoteMintAta: userQuote,
+                associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
+                vault: vault,
+                quantity: newAmount ,
+                proof: proof
+            }));
+
+            // console.log(txBuilder);
+            
+            const resDepositFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true}, confirm: { commitment: "confirmed" } });
+            console.log(bs58.encode(resDepositFunds.signature));
+
+            toast("Deposited funds");
+            refetch();
+        } catch (error) {
+            console.error("Failed to handle deposit action:", error);
+            toast.error("Failed to handle deposit action");
+            refetch();
+        }
+
+        setLoading(false);
+    }
+
+    const handleWithdrawFunds = async (e: any) => {
+        e.preventDefault();
+        if (!tokenManager || !poolManager) {
+            throw new Error("Token manager or pool manager not found");
+        }
+
+        setLoading(true);
+
+        try {
+            let txBuilder = new TransactionBuilder();
+            let baseMint = umi.eddsa.findPda(SOLD_ISSUANCE_PROGRAM_ID, [Buffer.from("mint")]);
+            let userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: baseMint[0] });
+            let userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint });
+            let vault = findAssociatedTokenPda(umi, { owner: tokenManager.publicKey, mint: tokenManager.quoteMint });
+            const proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
+
+            const userBaseAtaAcc = await safeFetchToken(umi, userBase);
+            const userQuoteAtaAcc = await safeFetchToken(umi, userQuote);
+
+            const newAmount = amount * 10 ** tokenManager.mintDecimals;
+
+            if (!userBaseAtaAcc) {
+                txBuilder = txBuilder.add(createAssociatedToken(umi, {
+                    mint: baseMint,
+                    owner: umi.identity.publicKey
+                }));
+            }
+
+            if (!userQuoteAtaAcc) {
+                txBuilder = txBuilder.add(createAssociatedToken(umi, {
+                    mint: tokenManager.quoteMint,
+                    owner: umi.identity.publicKey
+                }));
+            }
+
+            // Ensure all accounts are initialized before proceeding
+            await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true }, confirm: { commitment: "confirmed" } });
+
+            // Create a new transaction builder for the redeem operation
+            txBuilder = new TransactionBuilder();
 
             // Adjusted properties according to available ones in TokenManager
             txBuilder = txBuilder.add(redeem(umi, {
@@ -192,24 +221,26 @@ const handleDepositFunds = async (e: any) => {
                 payerQuoteMintAta: userQuote,
                 associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
                 vault: vault,
-                quantity: amount,
+                quantity: newAmount, // Use the converted amount
                 proof: proof
             }));
 
             console.log(txBuilder);
 
-            const resWithdrawFunds = await txBuilder.sendAndConfirm(umi, { confirm: { commitment: "confirmed" } });
+            const resWithdrawFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true }, confirm: { commitment: "confirmed" } });
             console.log(bs58.encode(resWithdrawFunds.signature));
 
             toast("Withdrawn funds");
             refetch();
-            
+
         } catch (error) {
             console.error("Failed to handle withdraw action:", error);
             toast.error("Failed to handle withdraw action");
             refetch();
         }
-    }
+
+        setLoading(false);
+    };
 
     return { tokenManager, poolManager, refetch, loading, statCardData, handleDepositFunds, amount, setAmount, handleWithdrawFunds };
 };
