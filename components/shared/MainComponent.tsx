@@ -108,9 +108,9 @@ export default function MainComponent() {
               <div className="w-full flex items-center justify-center">
                 {
                   wallet.publicKey ? <button
-                    className={`w-full h-full rounded-lg text-brand-secondary py-4 px-8 uppercase bg-brand-secondary ${loading && `text-opacity-50`} disabled:text-gray-80  bg-opacity-0 disabled:bg-opacity-10 hover:bg-opacity-10 ease-in-out transition-all duration-300`}
+                    className={`w-full h-full rounded-lg text-brand-secondary py-4 px-8 disabled:cursor-not-allowed uppercase bg-brand-secondary ${loading && `text-opacity-50`} disabled:text-gray-80 disabled:text-opacity-20  bg-opacity-10 disabled:bg-opacity-10 hover:bg-opacity-20 ease-in-out transition-all duration-300`}
                     onClick={handleDepositFunds}
-                    disabled={loading}
+                    disabled={loading || amount === 0}
                   >
                     {loading && <Spin size='small' />} {!loading && `Deposit`}
                   </button> : <MyMultiButton />
@@ -184,9 +184,9 @@ export default function MainComponent() {
                   <div className="w-full flex items-center justify-center">
                     {
                       wallet.publicKey ? <button
-                        className={`w-full h-full rounded-lg text-brand-main py-4 px-8 uppercase bg-brand-main disabled:text-gray-80 ${loading && `text-opacity-50`} bg-opacity-0 disabled:bg-opacity-10 hover:bg-opacity-10 ease-in-out transition-all duration-300 flex items-center justify-center gap-2`}
+                        className={`w-full h-full rounded-lg text-brand-main py-4 px-8 disabled:cursor-not-allowed uppercase bg-brand-main ${loading && `text-opacity-50`} disabled:text-gray-80 disabled:text-opacity-20  bg-opacity-10 disabled:bg-opacity-10 hover:bg-opacity-20 ease-in-out transition-all duration-300`}
                         onClick={handleWithdrawFunds}
-                        disabled={loading}
+                        disabled={loading || amount === 0}
                       >
                         {loading && <Spin size='small' />} {!loading && `Withdraw`}
                       </button> : <MyMultiButton />
