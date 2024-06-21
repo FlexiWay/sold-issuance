@@ -5,12 +5,13 @@ import React, { useState } from 'react'
 import MyMultiButton from './MyMultiButton'
 import Image from 'next/image'
 import { useSold } from '@/hooks/useSold'
+import { Spin } from 'antd'
 
 export default function MainComponent() {
   const wallet = useWallet()
   const [leftTab, setLeftTab] = useState(true)
 
-  const { handleDepositFunds, handleWithdrawFunds, amount, setAmount } = useSold()
+  const { handleDepositFunds, handleWithdrawFunds, amount, setAmount, loading } = useSold()
 
   const handleAmountChange = (event: { target: { value: any } }) => {
     setAmount(parseFloat(event.target.value));
@@ -20,7 +21,7 @@ export default function MainComponent() {
   return (
     <section className='w-full my-10'>
       <div
-        className="w-full flex items-center justify-center"
+        className="w-full flex items-start lg:items-center justify-center px-4 lg:px-0"
         style={{ height: 'calc(100vh - 104px)' }}
       >
 
@@ -28,13 +29,13 @@ export default function MainComponent() {
           {/* tabs */}
           <div className="w-full flex items-center justify-between">
             <div
-              className={`w-1/2 flex items-center justify-center p-4 bg-brand-secondary bg-opacity-10 text-brand-secondary rounded-tl-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${leftTab ? 'bg-opacity-20 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
+              className={`w-1/2 flex items-center justify-center p-4 bg-brand-secondary bg-opacity-10 text-brand-secondary rounded-tl-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${leftTab ? 'bg-opacity-40 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(true)}
             >
               Deposit
             </div>
             <div
-              className={`w-1/2 flex items-center justify-center p-4 bg-brand-main bg-opacity-10 text-brand-main rounded-tr-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${!leftTab ? 'bg-opacity-20 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
+              className={`w-1/2 flex items-center justify-center p-4 bg-brand-main bg-opacity-10 text-brand-main rounded-tr-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${!leftTab ? 'bg-opacity-40 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(false)}
             >
               Withdraw
@@ -49,7 +50,15 @@ export default function MainComponent() {
                 <span className='text-xs'>FROM</span>
                 <div className="relative w-full flex items-center justify-start">
                   <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
-                  <input type="number" id='amount-buy' className='w-full input input-bordered bg-transparent px-12 pr-4 py-2' placeholder='100' value={amount} onChange={handleAmountChange} />
+                  <input
+                    type="number"
+                    id='amount-buy'
+                    className='w-full input input-bordered bg-transparent px-12 pr-4 py-2'
+                    placeholder='100'
+                    value={amount}
+                    onChange={handleAmountChange}
+                    onFocus={(e) => e.target.value === '0' && (e.target.value = '')}
+                  />
                   <span className='absolute top-1/2 -translate-y-1/2 right-6'>USDC</span>
                 </div>
               </div>
@@ -58,7 +67,13 @@ export default function MainComponent() {
                 <span className='text-xs'>TO</span>
                 <div className="relative w-full flex items-center justify-start">
                   <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
-                  <input type="number" disabled className='w-full input input-bordered bg-transparent px-12 pr-4 py-2' placeholder='100' value={amount} />
+                  <input
+                    type="number"
+                    disabled
+                    className='w-full input input-bordered !bg-brand-secondary !bg-opacity-5 px-12 pr-4 py-2 !text-opacity-80 !text-brand-secondary'
+                    placeholder='100'
+                    value={amount}
+                  />
                   <span className='absolute top-1/2 -translate-y-1/2 right-6'>xSOLD</span>
                 </div>
               </div>
@@ -93,10 +108,11 @@ export default function MainComponent() {
               <div className="w-full flex items-center justify-center">
                 {
                   wallet.publicKey ? <button
-                    className='w-full h-full rounded-lg text-brand-secondary py-4 px-8 uppercase bg-brand-secondary bg-opacity-0 hover:bg-opacity-10 ease-in-out transition-all duration-300'
+                    className={`w-full h-full rounded-lg text-brand-secondary py-4 px-8 uppercase bg-brand-secondary ${loading && `text-opacity-50`} disabled:text-gray-80  bg-opacity-0 disabled:bg-opacity-10 hover:bg-opacity-10 ease-in-out transition-all duration-300`}
                     onClick={handleDepositFunds}
+                    disabled={loading}
                   >
-                    Deposit
+                    {loading && <Spin size='small' />} {!loading && `Deposit`}
                   </button> : <MyMultiButton />
                 }
               </div>
@@ -110,7 +126,14 @@ export default function MainComponent() {
                     <span className='text-xs'>FROM</span>
                     <div className="relative w-full flex items-center justify-start">
                       <Image width={20} height={20} src="/usdc.png" alt="xsold" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
-                      <input type="number" id='amount-sell' className='w-full input input-bordered bg-transparent px-12 pr-4 py-2' placeholder='100' />
+                      <input
+                        type="number"
+                        id='amount-sell'
+                        className='w-full input input-bordered bg-transparent px-12 pr-4 py-2'
+                        placeholder='100'
+                        value={amount}
+                        onChange={handleAmountChange}
+                      />
                       <span className='absolute top-1/2 -translate-y-1/2 right-6'>xSOLD</span>
                     </div>
                   </div>
@@ -119,7 +142,13 @@ export default function MainComponent() {
                     <span className='text-xs'>TO</span>
                     <div className="relative w-full flex items-center justify-start">
                       <Image width={20} height={20} src="/usdc.png" alt="usdc" className='w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2' />
-                      <input type="number" disabled className='w-full input input-bordered bg-transparent px-12 pr-4 py-2' placeholder='100' value={amount} />
+                      <input
+                        type="number"
+                        disabled
+                        className='w-full input input-bordered  px-12 pr-4 py-2  !text-opacity-100 !text-brand-main !bg-brand-main !bg-opacity-5'
+                        placeholder='100'
+                        value={amount}
+                      />
                       <span className='absolute top-1/2 -translate-y-1/2 right-6'>USDC</span>
 
                     </div>
@@ -155,10 +184,11 @@ export default function MainComponent() {
                   <div className="w-full flex items-center justify-center">
                     {
                       wallet.publicKey ? <button
-                        className='w-full h-full rounded-lg text-brand-main py-4 px-8 uppercase bg-brand-main bg-opacity-0 hover:bg-opacity-10 ease-in-out transition-all duration-300'
+                        className={`w-full h-full rounded-lg text-brand-main py-4 px-8 uppercase bg-brand-main disabled:text-gray-80 ${loading && `text-opacity-50`} bg-opacity-0 disabled:bg-opacity-10 hover:bg-opacity-10 ease-in-out transition-all duration-300 flex items-center justify-center gap-2`}
                         onClick={handleWithdrawFunds}
+                        disabled={loading}
                       >
-                        Withdraw
+                        {loading && <Spin size='small' />} {!loading && `Withdraw`}
                       </button> : <MyMultiButton />
                     }
                   </div>

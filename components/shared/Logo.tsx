@@ -15,7 +15,7 @@ export const Logo = ({ isDark }: any) => {
         width={140}
         height={140}
         alt=""
-        className="min-w-[30px] w-12 md:w-32 lg:w-64 max-w-[140px] cursor-pointer"
+        className="min-w-[30px] md:w-32 lg:w-64 max-w-[140px] cursor-pointer"
       />
     </Link>
   );

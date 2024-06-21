@@ -1,17 +1,14 @@
 import React from 'react';
-import { Inter } from 'next/font/google';
-
-import "./globals.css";
-
-require("@solana/wallet-adapter-react-ui/styles.css");
-
-import LayoutWrapper from './LayoutWrapper';
 import Head from 'next/head';
 import { Toaster } from 'sonner';
+import { Inter } from 'next/font/google';
+
+import LayoutWrapper from './LayoutWrapper';
 import NewAppBar from '@/components/shared/NewAppBar';
 
-
-
+import "./globals.css";
+import { Footer } from 'antd/es/layout/layout';
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 type Metadata = any;
 type Viewport = any;
@@ -21,10 +18,10 @@ const fontSans = Inter({
   variable: '--font-sans',
 });
 
-const APP_NAME = "BUILDERZ Solana dApp Scaffold";
-const APP_DEFAULT_TITLE = "BUILDERZ Solana dApp Scaffold";
-const APP_TITLE_TEMPLATE = "%s - PWA App";
-const APP_DESCRIPTION = "Best PWA app in the world!";
+const APP_NAME = "Parity Issuance Portal";
+const APP_DEFAULT_TITLE = "Parity Issuance Portal";
+const APP_TITLE_TEMPLATE = "%s - Parity Issuance Portal";
+const APP_DESCRIPTION = "Parity Issuance Portal is a platform to mint and redeem your xSOLD tokens.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
@@ -103,7 +100,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div lang="en">
             {children}
           </div>
-          <Toaster />
+          {/* <Footer /> */}
+          <Toaster theme='dark' />
         </body>
       </html>
     </LayoutWrapper>
