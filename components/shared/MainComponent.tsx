@@ -33,13 +33,13 @@ export default function MainComponent() {
               className={`w-1/2 flex items-center justify-center p-4 bg-brand-secondary bg-opacity-10 text-brand-secondary rounded-tl-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${leftTab ? 'bg-opacity-40 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(true)}
             >
-              Deposit
+              Mint
             </div>
             <div
               className={`w-1/2 flex items-center justify-center p-4 bg-brand-main bg-opacity-10 text-brand-main rounded-tr-lg uppercase hover:bg-opacity-40 cursor-pointer font-bold  ${!leftTab ? 'bg-opacity-40 text-opacity-100 ' : 'text-opacity-50'} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(false)}
             >
-              Withdraw
+              Redeem
             </div>
           </div>
 
@@ -49,7 +49,7 @@ export default function MainComponent() {
               {/* from */}
               <div className="w-full flex flex-col items-start justify-start gap-2">
                 <div className="w-full flex items-center justify-between">
-                  <span className='text-xs'>FROM</span>
+                  <span className='text-xs'>You&apos;re giving</span>
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-full flex items-center justify-center opacity-50 gap-1">
                       <CiWallet className='w-3 h-3' />
@@ -88,8 +88,8 @@ export default function MainComponent() {
               {/* to */}
               <div className="w-full flex flex-col items-start justify-start gap-2">
                 <div className="w-full flex items-center justify-between">
-                  <span className='text-xs'>TO</span>
-                  <div className="w-full flex items-center justify-end opacity-50 gap-1">
+                  <span className='text-xs'>To receive</span>
+                  <div className=" flex items-center justify-end opacity-50 gap-1">
                     <CiWallet className='w-3 h-3' />
                     <span className='text-[10px]'>{userBalancePUSD.toLocaleString()}</span>
                   </div>
@@ -141,7 +141,7 @@ export default function MainComponent() {
                     onClick={handleDepositFunds}
                     disabled={loading || amount === 0}
                   >
-                    {loading && <Spin size='small' />} {!loading && `Deposit`}
+                    {loading && <Spin size='small' />} {!loading && `Mint`}
                   </button> : <MyMultiButton />
                 }
               </div>
@@ -153,11 +153,11 @@ export default function MainComponent() {
                   {/* from */}
                   <div className="w-full flex flex-col items-start justify-start gap-2">
                     <div className="w-full flex items-center justify-between">
-                      <span className='text-xs'>FROM</span>
+                      <span className="text-xs">You&apos;re giving</span>
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-full flex items-center justify-center opacity-50 gap-1">
-                          <CiWallet className='w-3 h-3' />
-                          <span className='text-[10px]'>{userBalancePUSD.toLocaleString()}</span>
+                          <CiWallet className="w-3 h-3" />
+                          <span className="text-[10px]">{userBalancePUSD.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           <button
@@ -191,8 +191,8 @@ export default function MainComponent() {
                   {/* to */}
                   <div className="w-full flex flex-col items-start justify-start gap-2">
                     <div className="w-full flex items-center justify-between">
-                      <span className='text-xs'>TO</span>
-                      <div className="w-full flex items-center justify-end opacity-50 gap-1">
+                      <span className='text-xs'>To receive</span>
+                      <div className="flex items-center justify-end opacity-50 gap-1">
                         <CiWallet className='w-3 h-3' />
                         <span className='text-[10px]'>{userBalanceUSDC.toLocaleString()}</span>
                       </div>
@@ -244,7 +244,7 @@ export default function MainComponent() {
                         onClick={handleWithdrawFunds}
                         disabled={loading || amount === 0}
                       >
-                        {loading && <Spin size='small' />} {!loading && `Withdraw`}
+                        {loading && <Spin size='small' />} {!loading && `Redeem`}
                       </button> : <MyMultiButton />
                     }
                   </div>
