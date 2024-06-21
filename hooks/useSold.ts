@@ -109,7 +109,6 @@ export const useSold = () => {
             throw new Error("Token manager or pool manager not found");
         }
 
-        // console.log(tokenManager.mint, tokenManager.quoteMint)
         setLoading(true);
 
         try {
@@ -154,8 +153,6 @@ export const useSold = () => {
                 quantity: newAmount ,
                 proof: proof
             }));
-
-            // console.log(txBuilder);
             
             const resDepositFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true}, confirm: { commitment: "confirmed" } });
             console.log(bs58.encode(resDepositFunds.signature));
@@ -206,12 +203,6 @@ export const useSold = () => {
                 }));
             }
 
-            // Ensure all accounts are initialized before proceeding
-            await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true }, confirm: { commitment: "confirmed" } });
-
-            // Create a new transaction builder for the redeem operation
-            txBuilder = new TransactionBuilder();
-
             // Adjusted properties according to available ones in TokenManager
             txBuilder = txBuilder.add(redeem(umi, {
                 tokenManager: tokenManager.publicKey,
@@ -221,7 +212,7 @@ export const useSold = () => {
                 payerQuoteMintAta: userQuote,
                 associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
                 vault: vault,
-                quantity: newAmount, // Use the converted amount
+                quantity: newAmount, 
                 proof: proof
             }));
 
