@@ -1,4 +1,4 @@
-import { safeFetchPoolManager, safeFetchTokenManager, findPoolManagerPda, findTokenManagerPda, PoolManager, TokenManager,  createTestQuote, SetupOptions, toggleActive, setup, mint, redeem, getMerkleProof, SOLD_ISSUANCE_PROGRAM_ID } from "@builderz/sold";
+import { safeFetchPoolManager, safeFetchTokenManager, findPoolManagerPda, findTokenManagerPda, PoolManager, TokenManager, createTestQuote, SetupOptions, toggleActive, setup, mint, redeem, getMerkleProof, SOLD_ISSUANCE_PROGRAM_ID } from "@builderz/sold";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -20,8 +20,9 @@ export const useSold = () => {
     const [amount, setAmount] = useState(0);
     const [tokenManager, setTokenManager] = useState<TokenManager | null>(null);
     const [poolManager, setPoolManager] = useState<PoolManager | null>(null);
+
     const [reset, setReset] = useState(0);
-    const allowedWallets: (string | Uint8Array)[] = [];
+    const [allowList, setAllowList] = useState<string[]>([]);
     const [userBalancePUSD, setUserBalancePUSD] = useState(0);
     const [userBalanceUSDC, setUserBalanceUSDC] = useState(0);
 
@@ -57,6 +58,9 @@ export const useSold = () => {
             const tokenManagerAcc = await safeFetchTokenManager(umi, tokenManagerPubKey);
             const poolManagerAcc = await safeFetchPoolManager(umi, poolManagerPubKey);
 
+            console.log(tokenManagerAcc);
+            console.log(poolManagerAcc);
+
             setTokenManager(tokenManagerAcc);
             setPoolManager(poolManagerAcc);
 
@@ -82,48 +86,21 @@ export const useSold = () => {
         setReset(prev => prev + 1);
     }
 
-    // const handleToggleActive = async () => {
-    //     try {
-    //         let txBuilder = new TransactionBuilder()
+    useEffect(() => {
+        const getUserBalances = async () => {
+            const userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager!.mint });
+            const userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager!.quoteMint });
 
-    //         txBuilder = txBuilder.add(toggleActive(umi, {
-    //             tokenManager: tokenManagerPubKey,
-    //             active: !tokenManager?.active
-    //         }));
+            const userBaseAtaAcc = await safeFetchToken(umi, userBase);
+            const userQuoteAtaAcc = await safeFetchToken(umi, userQuote);
 
-    //         console.log(txBuilder);
-
-    //         const resToggleActive = await txBuilder.sendAndConfirm(umi, { confirm: { commitment: "confirmed" } });
-    //         console.log(bs58.encode(resToggleActive.signature));
-
-    //         toast(`${tokenManager?.active ? "Paused" : "Unpaused"}`)
-    //         refetch()
-    //     } catch (error) {
-    //         console.error("Failed to handle toggle active:", error);
-    //         toast("Failed to handle toggle active")
-    //         refetch()
-    //     }
-    // }
-
- 
-
-    const getUserBalances = async () => {
-        if (!tokenManager || !poolManager) {
-            throw new Error("Token manager or pool manager not found");
+            setUserBalancePUSD(userBaseAtaAcc ? bigIntToFloat(userBaseAtaAcc.amount, tokenManager!.mintDecimals) : 0);
+            setUserBalanceUSDC(userQuoteAtaAcc ? bigIntToFloat(userQuoteAtaAcc.amount, tokenManager!.quoteMintDecimals) : 0);
         }
 
-        const userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.mint });
-        const userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint });
-
-        const userBaseAtaAcc = await safeFetchToken(umi, userBase);
-        const userQuoteAtaAcc = await safeFetchToken(umi, userQuote);
-
-        setUserBalancePUSD(userBaseAtaAcc ? bigIntToFloat(userBaseAtaAcc.amount, tokenManager.mintDecimals) : 0);
-        setUserBalanceUSDC(userQuoteAtaAcc ? bigIntToFloat(userQuoteAtaAcc.amount, tokenManager.quoteMintDecimals) : 0);
-    }
-
-       useEffect(() => {
-        getUserBalances();
+        if (tokenManager && poolManager) {
+            getUserBalances();
+        }
     }, [tokenManager, poolManager]);
 
     const handleDepositFunds = async (e: any) => {
@@ -136,19 +113,19 @@ export const useSold = () => {
 
         try {
             let txBuilder = new TransactionBuilder();
-            
+
             let baseMint = umi.eddsa.findPda(SOLD_ISSUANCE_PROGRAM_ID, [Buffer.from("mint")])
             let userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: baseMint[0] })
             let userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint })
             let vault = findAssociatedTokenPda(umi, { owner: tokenManagerPubKey[0], mint: tokenManager.quoteMint })
-            
-            const proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
+
+            const proof = getMerkleProof(allowList, umi.identity.publicKey);
 
             const userBaseAtaAcc = await safeFetchToken(umi, userBase)
             const userQuoteAtaAcc = await safeFetchToken(umi, userQuote)
 
 
-            const newAmount = amount * 10**tokenManager.mintDecimals; 
+            const newAmount = amount * 10 ** tokenManager.mintDecimals;
 
             if (!userBaseAtaAcc) {
                 txBuilder = txBuilder.add(createAssociatedToken(umi, {
@@ -173,11 +150,11 @@ export const useSold = () => {
                 payerQuoteMintAta: userQuote,
                 associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
                 vault: vault,
-                quantity: newAmount ,
+                quantity: newAmount,
                 proof: proof
             }));
-            
-            const resDepositFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true}, confirm: { commitment: "confirmed" } });
+
+            const resDepositFunds = await txBuilder.sendAndConfirm(umi, { send: { skipPreflight: true }, confirm: { commitment: "confirmed" } });
             console.log(bs58.encode(resDepositFunds.signature));
 
             toast("Deposited funds");
@@ -205,7 +182,7 @@ export const useSold = () => {
             let userBase = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: baseMint[0] });
             let userQuote = findAssociatedTokenPda(umi, { owner: umi.identity.publicKey, mint: tokenManager.quoteMint });
             let vault = findAssociatedTokenPda(umi, { owner: tokenManager.publicKey, mint: tokenManager.quoteMint });
-            const proof = getMerkleProof(allowedWallets, umi.identity.publicKey);
+            const proof = getMerkleProof(allowList, umi.identity.publicKey);
 
             const userBaseAtaAcc = await safeFetchToken(umi, userBase);
             const userQuoteAtaAcc = await safeFetchToken(umi, userQuote);
@@ -235,7 +212,7 @@ export const useSold = () => {
                 payerQuoteMintAta: userQuote,
                 associatedTokenProgram: SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
                 vault: vault,
-                quantity: newAmount, 
+                quantity: newAmount,
                 proof: proof
             }));
 
@@ -256,5 +233,23 @@ export const useSold = () => {
         setLoading(false);
     };
 
-    return { tokenManager, poolManager, refetch, loading, statCardData, handleDepositFunds, userBalancePUSD, userBalanceUSDC , amount, setAmount, handleWithdrawFunds };
+    useEffect(() => {
+        const fetchAllowList = async () => {
+            try {
+                const response = await fetch('/api/get-allowlist'); // Adjust the endpoint as needed
+                if (!response.ok) {
+                    throw new Error('Failed to fetch allowlist');
+                }
+                const data = await response.json();
+                setAllowList(data.addresses);
+            } catch (error) {
+                console.error("Failed to fetch allowlist:", error);
+                toast("Failed to fetch allowlist");
+            }
+        };
+
+        fetchAllowList();
+    }, [reset]);
+
+    return { tokenManager, poolManager, refetch, loading, statCardData, handleDepositFunds, userBalancePUSD, userBalanceUSDC, amount, setAmount, handleWithdrawFunds };
 };
