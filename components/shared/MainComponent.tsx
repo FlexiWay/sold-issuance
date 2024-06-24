@@ -124,9 +124,9 @@ export default function MainComponent() {
                   <Image
                     width={20}
                     height={20}
-                    src="/usdc.png"
-                    alt="usdc"
-                    className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2"
+                    src="/pusd.png"
+                    alt="pusd"
+                    className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 rounded-full"
                   />
                   <input
                     type="number"
@@ -221,9 +221,9 @@ export default function MainComponent() {
                     <Image
                       width={20}
                       height={20}
-                      src="/usdc.png"
+                      src="/pusd.png"
                       alt="pUSD"
-                      className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2"
+                      className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 rounded-full"
                     />
                     <input
                       type="number"
