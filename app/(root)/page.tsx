@@ -1,5 +1,5 @@
-import Footer from '@/components/shared/Footer';
-import MainComponent from '@/components/shared/MainComponent';
+import Footer from "@/components/shared/Footer";
+import MainComponent from "@/components/shared/MainComponent";
 
 export default function Home() {
   return (
