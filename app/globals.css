@@ -184,6 +184,10 @@
     font-display: swap;
 }
 
+* {
+   font-family: 'Roobert TRIAL'
+}
+
   /* Body styles */
   body {
     @apply bg-texture-bg bg-bottom bg-cover bg-no-repeat text-white selection:bg-brand-main selection:text-white;
@@ -204,18 +208,24 @@
   h1 {
     font-size: calc(30px + (36 - 30) * ((100vw - 320px) / (1280 - 320)));
     font-style: normal;
+     font-family: 'Roobert TRIAL', sans-serif;
+
     font-weight: 900;
     line-height: calc(36px + (40 - 36) * ((100vw - 320px) / (1280 - 320)));
   }
   h2 {
     font-size: calc(20px + (24 - 20) * ((100vw - 320px) / (1280 - 320)));
     font-style: normal;
+     font-family: 'Roobert TRIAL', sans-serif;
+
     font-weight: 800;
     line-height: calc(34px + (38 - 34) * ((100vw - 320px) / (1280 - 320)));
   }
   h3 {
     font-size: calc(18px + (20 - 18) * ((100vw - 320px) / (1280 - 320)));
     font-style: normal;
+     font-family: 'Roobert TRIAL', sans-serif;
+
     font-weight: 700;
     line-height: calc(28px + (32 - 28) * ((100vw - 320px) / (1280 - 320)));
   }

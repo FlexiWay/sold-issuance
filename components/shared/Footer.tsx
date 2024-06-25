@@ -1,5 +1,6 @@
+import Image from 'next/image';
 import React from "react";
-import { FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaTwitter, FaLinkedin, FaX } from "react-icons/fa";
 import { TbWorldWww } from "react-icons/tb";
 
 function Footer() {
@@ -11,25 +12,31 @@ function Footer() {
           href="https://twitter.com/parityfinance"
           target="_blank"
           rel="noreferrer"
-          className="text-xs opacity-50 hover:opacity-100 transition-all duration-300 ease-in-out"
+          data-tip="X"
+          className="text-xs tooltip opacity-60 hover:opacity-100 transition-all duration-300 ease-in-out"
         >
-          <FaTwitter size={16} />
+          {/* <FaTwitter size={16} /> */}
+          <Image width={16} height={16} src="/images/x.svg" alt="x" className='w-4 h-4' />
         </a>
         <a
           href="https://twitter.com/parityfinance"
           target="_blank"
           rel="noreferrer"
-          className="text-xs opacity-50 hover:opacity-100 transition-all duration-300 ease-in-out"
+          data-tip="Telegram"
+          className="text-xs tooltip opacity-60 hover:opacity-100 transition-all duration-300 ease-in-out"
         >
-          <TbWorldWww size={16} />
+          {/* <TbWorldWww size={16} /> */}
+          <Image width={16} height={16} src="/images/telegram.svg" alt="telegram" className='w-4 h-4' />
         </a>
         <a
           href="https://twitter.com/parityfinance"
           target="_blank"
           rel="noreferrer"
-          className="text-xs opacity-50 hover:opacity-100 transition-all duration-300 ease-in-out"
+          data-tip="Discord"
+          className="text-xs tooltip opacity-60 hover:opacity-100 transition-all duration-300 ease-in-out"
         >
-          <FaLinkedin size={16} />
+          {/* <FaLinkedin size={16} /> */}
+          <Image width={16} height={16} src="/images/discord.svg" alt="discord" className='w-4 h-4' />
         </a>
       </div>
     </footer>
