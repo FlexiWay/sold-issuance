@@ -27,7 +27,7 @@ const config = {
         "brand-bg": "#101010",
         "brand-main": "#EF5323",
         "brand-secondary": "#6EC7FD",
-        'brand-first': '#492BFF',
+        "brand-first": "#492BFF",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -89,10 +89,7 @@ const config = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"), 
-    require("daisyui")
-  ],
+  plugins: [require("tailwindcss-animate"), require("daisyui")],
 } satisfies Config;
 
 export default config;

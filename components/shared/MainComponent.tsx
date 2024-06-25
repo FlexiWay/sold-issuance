@@ -105,15 +105,21 @@ export default function MainComponent() {
                     }
                   />
                   <span className="pr-6 absolute right-0 z-0 top-1/2 -translate-y-[55%] text-[14px] opacity-100 flex flex-col items-end justify-center -gap-0 pointer-events-none">
-                    <span className='text-[20px] -mb-1 text-white'>{amount}</span>
-                    <span className='text-xs opacity-50'>${amount}</span>
+                    <span className="text-[20px] -mb-1 text-white">
+                      {amount}
+                    </span>
+                    <span className="text-xs opacity-50">${amount}</span>
                   </span>
                   <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
-                    <span className='font-bold uppercase text-[18px] -mb-2'>USDC</span>
+                    <span className="font-bold uppercase text-[18px] -mb-2">
+                      USDC
+                    </span>
                     <div className="flex items-center justify-start gap-1">
                       <div className="flex items-center justify-start gap-1">
-                        <span className='text-xs opacity-40'>Balance:</span>
-                        <span className='text-xs '>{userBalanceUSDC.toLocaleString()}</span>
+                        <span className="text-xs opacity-40">Balance:</span>
+                        <span className="text-xs ">
+                          {userBalanceUSDC.toLocaleString()}
+                        </span>
                       </div>
                       <button
                         className="rounded-2xl text-[#3B42FF] hover:text-brand-secondary  text-[12px] px-2"
@@ -157,15 +163,21 @@ export default function MainComponent() {
                     value={amount}
                   />
                   <span className="pr-6 absolute right-0 z-0 top-1/2 -translate-y-[55%] text-[14px] opacity-100 flex flex-col items-end justify-center -gap-0 pointer-events-none">
-                    <span className='text-[20px] -mb-1 text-white'>{amount}</span>
-                    <span className='text-xs opacity-50'>${amount}</span>
+                    <span className="text-[20px] -mb-1 text-white">
+                      {amount}
+                    </span>
+                    <span className="text-xs opacity-50">${amount}</span>
                   </span>
                   <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
-                    <span className='font-bold uppercase text-[18px] -mb-2'>pUSD</span>
+                    <span className="font-bold uppercase text-[18px] -mb-2">
+                      pUSD
+                    </span>
                     <div className="flex items-center justify-start gap-1">
                       <div className="flex items-center justify-start gap-1">
-                        <span className='text-xs opacity-40'>Balance:</span>
-                        <span className='text-xs '>{userBalancePUSD.toLocaleString()}</span>
+                        <span className="text-xs opacity-40">Balance:</span>
+                        <span className="text-xs ">
+                          {userBalancePUSD.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -173,7 +185,6 @@ export default function MainComponent() {
               </div>
 
               <div className="w-full h-0.5 bg-[#E5E7EB14]"></div>
-
 
               {/* stats */}
               <div className="w-full flex flex-col items-start justify-start gap-4">
@@ -263,23 +274,27 @@ export default function MainComponent() {
                       type="number"
                       id="amount-sell"
                       className="w-full input text-end bg-[#1B1E24] px-16 pr-6 py-6 pb-10 relative !text-opacity-0 !text-transparent"
-                      // placeholder="100"
-                      // value={amount}
                       onChange={handleAmountChange}
                       onFocus={(e) =>
                         e.target.value === "0" && (e.target.value = "")
                       }
                     />
                     <span className="pr-6 absolute right-0 z-0 top-1/2 -translate-y-[55%] text-[14px] opacity-100 flex flex-col items-end justify-center -gap-0 pointer-events-none">
-                      <span className='text-[20px] -mb-1 text-white'>{amount}</span>
-                      <span className='text-xs opacity-50'>${amount}</span>
+                      <span className="text-[20px] -mb-1 text-white">
+                        {amount}
+                      </span>
+                      <span className="text-xs opacity-50">${amount}</span>
                     </span>
                     <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
-                      <span className='font-bold uppercase text-[18px] -mb-2'>PUSD</span>
+                      <span className="font-bold uppercase text-[18px] -mb-2">
+                        PUSD
+                      </span>
                       <div className="flex items-center justify-start gap-1">
                         <div className="flex items-center justify-start gap-1">
-                          <span className='text-xs opacity-40'>Balance:</span>
-                          <span className='text-xs '>{userBalancePUSD.toLocaleString()}</span>
+                          <span className="text-xs opacity-40">Balance:</span>
+                          <span className="text-xs ">
+                            {userBalancePUSD.toLocaleString()}
+                          </span>
                         </div>
                         <button
                           className="rounded-2xl text-[#3B42FF] hover:text-brand-secondary  text-[12px] px-2"
@@ -321,17 +336,22 @@ export default function MainComponent() {
                       value={amount}
                     />
                     <span className="pr-6 absolute right-0 z-0 top-1/2 -translate-y-[55%] text-[14px] opacity-100 flex flex-col items-end justify-center -gap-0 pointer-events-none">
-                      <span className='text-[20px] -mb-1 text-white'>{amount}</span>
-                      <span className='text-xs opacity-50'>${amount}</span>
+                      <span className="text-[20px] -mb-1 text-white">
+                        {amount}
+                      </span>
+                      <span className="text-xs opacity-50">${amount}</span>
                     </span>
                     <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
-                      <span className='font-bold uppercase text-[18px] -mb-2'>USDC</span>
+                      <span className="font-bold uppercase text-[18px] -mb-2">
+                        USDC
+                      </span>
                       <div className="flex items-center justify-start gap-1">
                         <div className="flex items-center justify-start gap-1">
-                          <span className='text-xs opacity-40'>Balance:</span>
-                          <span className='text-xs '>{userBalanceUSDC.toLocaleString()}</span>
+                          <span className="text-xs opacity-40">Balance:</span>
+                          <span className="text-xs ">
+                            {userBalanceUSDC.toLocaleString()}
+                          </span>
                         </div>
-
                       </div>
                     </div>
                   </div>
