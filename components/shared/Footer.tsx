@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from "react";
-import { FaTwitter, FaLinkedin, FaX } from "react-icons/fa";
+import { FaTwitter, FaLinkedin } from "react-icons/fa";
 import { TbWorldWww } from "react-icons/tb";
 
 function Footer() {
