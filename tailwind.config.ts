@@ -67,6 +67,7 @@ const config = {
         "texture-bg": "url('/bg.png')",
         "card-bg": "linear-gradient(to top, #101010, #101010)",
         "card-bgModal": "linear-gradient(to top, #101010, transparent)",
+        "apy-gradient": "linear-gradient(to right, #3B42FF, #6557FF)",
       },
       borderRadius: {
         lg: "var(--radius)",

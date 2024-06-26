@@ -321,39 +321,7 @@ export default function MainComponent() {
                     </div> */}
                   </div>
                   <div className="relative w-full flex items-center justify-start">
-                    <Image
-                      width={40}
-                      height={40}
-                      src="/usdc.svg"
-                      alt="usdc"
-                      className="w-10 h-10 absolute z-30 left-3 top-1/2 -translate-y-1/2 rounded-full"
-                    />
-                    <input
-                      type="number"
-                      disabled
-                      className="w-full input text-end bg-[#1B1E24] px-16 pr-6 py-6 pb-10 relative !text-opacity-0 !text-transparent"
-                      placeholder="0"
-                      value={amount}
-                    />
-                    <span className="pr-6 absolute right-0 z-0 top-1/2 -translate-y-[55%] text-[14px] opacity-100 flex flex-col items-end justify-center -gap-0 pointer-events-none">
-                      <span className="text-[20px] -mb-1 text-white">
-                        {amount}
-                      </span>
-                      <span className="text-xs opacity-50">${amount}</span>
-                    </span>
-                    <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
-                      <span className="font-bold uppercase text-[18px] -mb-2">
-                        USDC
-                      </span>
-                      <div className="flex items-center justify-start gap-1">
-                        <div className="flex items-center justify-start gap-1">
-                          <span className="text-xs opacity-40">Balance:</span>
-                          <span className="text-xs ">
-                            {userBalanceUSDC.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                 </div>
 
