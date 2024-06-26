@@ -110,7 +110,7 @@ export default function MainComponent() {
                     </span>
                     <span className="text-xs opacity-50">${amount}</span>
                   </span>
-                  <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
+                  <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start gap-1">
                     <span className="font-bold uppercase text-[18px] -mb-2">
                       USDC
                     </span>
@@ -168,7 +168,7 @@ export default function MainComponent() {
                     </span>
                     <span className="text-xs opacity-50">${amount}</span>
                   </span>
-                  <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start">
+                  <div className="absolute top-1/2 -translate-y-1/2 left-16 flex flex-col items-start justify-start gap-1">
                     <span className="font-bold uppercase text-[18px] -mb-2">
                       pUSD
                     </span>
