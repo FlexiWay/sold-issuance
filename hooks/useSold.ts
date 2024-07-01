@@ -25,10 +25,10 @@ import {
   findAssociatedTokenPda,
   safeFetchToken,
   createAssociatedToken,
-  transferTokensChecked
+  transferTokensChecked,
 } from "@metaplex-foundation/mpl-toolbox";
 import { toast } from "sonner";
-import { TransactionBuilder } from "@metaplex-foundation/umi";
+import { TransactionBuilder, createAmount } from "@metaplex-foundation/umi";
 // @ts-ignore
 import bs58 from "bs58";
 
@@ -350,7 +350,14 @@ export const useSold = () => {
     try {
       setDevnetFaucetLoading(true);
 
-      const adminKp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(process.env.NEXT_PUBLIC_DEVNET_KP!)))
+      const adminKp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(process.env.NEXT_PUBLIC_DEVNET_KP!)));
+
+      const userSolBalance = await umi.rpc.getBalance(umi.identity.publicKey);
+
+      if (userSolBalance.basisPoints < 100000000) {
+        toast.error("Requesting SOL");
+        await umi.rpc.airdrop(umi.identity.publicKey, createAmount(100_000 * 10 ** 9, "SOL", 9), { commitment: "finalized" });
+      }
 
       const adminAta = findAssociatedTokenPda(umi, {
         owner: adminKp.publicKey,
