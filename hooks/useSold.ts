@@ -25,6 +25,7 @@ import {
   findAssociatedTokenPda,
   safeFetchToken,
   createAssociatedToken,
+  transferTokensChecked
 } from "@metaplex-foundation/mpl-toolbox";
 import { toast } from "sonner";
 import { TransactionBuilder } from "@metaplex-foundation/umi";
@@ -138,9 +139,9 @@ export const useSold = () => {
       setUserBalanceUSDC(
         userQuoteAtaAcc
           ? bigIntToFloat(
-              userQuoteAtaAcc.amount,
-              tokenManager!.quoteMintDecimals,
-            )
+            userQuoteAtaAcc.amount,
+            tokenManager!.quoteMintDecimals,
+          )
           : 0,
       );
     };
@@ -336,6 +337,63 @@ export const useSold = () => {
     fetchAllowList();
   }, [reset]);
 
+  // Devnet Faucet
+  const [devnetFaucetAmount, setDevnetFaucetAmount] = useState(10000);
+  const [devnetFaucetLoading, setDevnetFaucetLoading] = useState(false);
+
+  const handleMintDevnetUSDC = async () => {
+    if (!tokenManager) {
+      toast.error("Token manager not found");
+      return;
+    }
+
+    try {
+      setDevnetFaucetLoading(true);
+
+      const adminKp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(process.env.NEXT_PUBLIC_DEVNET_KP!)))
+
+      const adminAta = findAssociatedTokenPda(umi, {
+        owner: adminKp.publicKey,
+        mint: tokenManager!.quoteMint,
+      });
+
+      const userAta = findAssociatedTokenPda(umi, {
+        owner: umi.identity.publicKey,
+        mint: tokenManager!.quoteMint,
+      });
+
+      let txBuilder = new TransactionBuilder();
+
+      const userAtaAcc = await safeFetchToken(umi, userAta);
+
+      if (!userAtaAcc) {
+        txBuilder = txBuilder.add(
+          createAssociatedToken(umi, {
+            mint: tokenManager!.quoteMint,
+            owner: umi.identity.publicKey,
+          }),
+        );
+      }
+
+      txBuilder = txBuilder.add(transferTokensChecked(umi, {
+        source: adminAta,
+        destination: userAta,
+        amount: devnetFaucetAmount * 10 ** tokenManager.quoteMintDecimals,
+        decimals: tokenManager.quoteMintDecimals,
+        mint: tokenManager.quoteMint,
+      }))
+
+      const res = await txBuilder.sendAndConfirm(umi, { confirm: { commitment: "finalized" } });
+      console.log(bs58.encode(res.signature));
+      toast("Minted devnet USDC");
+    } catch (error) {
+      console.error("Failed to handle mint devnet USDC:", error);
+      toast.error("Failed to handle mint devnet USDC");
+    } finally {
+      setDevnetFaucetLoading(false);
+    }
+  }
+
   return {
     tokenManager,
     poolManager,
@@ -348,5 +406,9 @@ export const useSold = () => {
     amount,
     setAmount,
     handleWithdrawFunds,
+    devnetFaucetAmount,
+    setDevnetFaucetAmount,
+    devnetFaucetLoading,
+    handleMintDevnetUSDC,
   };
 };

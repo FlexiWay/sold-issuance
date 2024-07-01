@@ -1,15 +1,15 @@
 "use client";
 
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import React, { useState } from "react";
 import MyMultiButton from "./MyMultiButton";
 import Image from "next/image";
 import { useSold } from "@/hooks/useSold";
 import { Spin } from "antd";
-import { CiWallet } from "react-icons/ci";
 
 export default function MainComponent() {
   const wallet = useWallet();
+  const { connection } = useConnection();
   const [leftTab, setLeftTab] = useState(true);
 
   const {
@@ -20,6 +20,10 @@ export default function MainComponent() {
     loading,
     userBalancePUSD,
     userBalanceUSDC,
+    devnetFaucetAmount,
+    setDevnetFaucetAmount,
+    devnetFaucetLoading,
+    handleMintDevnetUSDC,
   } = useSold();
 
   const handleAmountChange = (event: { target: { value: any } }) => {
@@ -27,11 +31,39 @@ export default function MainComponent() {
   };
 
   return (
-    <section className="w-full my-10">
+    <section className="w-full my-6">
       <div
-        className="w-full flex items-start lg:items-center justify-center px-4 lg:px-0"
+        className="w-full flex flex-col space-y-6 items-start lg:items-center justify-center px-4 lg:px-0"
         style={{ height: "calc(100vh - 104px)" }}
       >
+        {/* Devnet USDC faucet */}
+        {connection.rpcEndpoint.includes("devnet") ? (
+          <div className="w-full max-w-md bg-brand-bg rounded-lg shadow-md border border-[#E5E7EB0A] min-h-10 mt-8">
+          <form className="w-full flex flex-col items-center justify-start gap-6 p-6 py-8">
+            <div className="w-full flex flex-col items-start justify-start gap-2">
+              <label htmlFor="usdcAmount" className="text-xs">Amount of USDC to Mint</label>
+              <input
+                type="number"
+                id="usdcAmount"
+                className="w-full p-2 border rounded"
+                placeholder="Enter amount"
+                onChange={(e) => setDevnetFaucetAmount(parseInt(e.target.value))}
+                value={devnetFaucetAmount}
+              />
+            </div>
+            <div className="w-full flex items-center justify-center">
+              <button
+                className="w-full h-full rounded-lg text-white py-4 px-8 disabled:cursor-not-allowed uppercase bg-brand-first bg-opacity-100 hover:bg-opacity-20 ease-in-out transition-all duration-300"
+                onClick={handleMintDevnetUSDC}
+                disabled={devnetFaucetLoading}
+              >
+                {devnetFaucetLoading && <Spin size="small" />} {!devnetFaucetLoading && `Mint USDC`}
+              </button>
+            </div>
+          </form>
+        </div>
+        ) : null}
+
         <div className="w-full max-w-md bg-brand-bg rounded-lg shadow-md border border-[#E5E7EB0A]  min-h-10">
           {/* tabs */}
           <div className="w-full flex items-center justify-between">
