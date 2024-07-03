@@ -220,7 +220,7 @@ export const useSold = () => {
       );
 
       const resDepositFunds = await txBuilder.sendAndConfirm(umi, {
-        send: { skipPreflight: true },
+        send: { skipPreflight: false },
         confirm: { commitment: "confirmed" },
       });
       console.log(bs58.encode(resDepositFunds.signature));
@@ -304,7 +304,7 @@ export const useSold = () => {
       console.log(txBuilder);
 
       const resWithdrawFunds = await txBuilder.sendAndConfirm(umi, {
-        send: { skipPreflight: true },
+        send: { skipPreflight: false },
         confirm: { commitment: "confirmed" },
       });
       console.log(bs58.encode(resWithdrawFunds.signature));
@@ -352,16 +352,17 @@ export const useSold = () => {
       setDevnetFaucetLoading(true);
 
       const adminKp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(process.env.NEXT_PUBLIC_DEVNET_KP!)));
-      const umiAdminSigner = umi.use(keypairIdentity(adminKp));
+      umi = umi.use(keypairIdentity(adminKp));
 
-      const userSolBalance = await umiAdminSigner.rpc.getBalance(umiAdminSigner.identity.publicKey);
+      const userSolBalance = await umi.rpc.getBalance(publicKey(wallet.publicKey!.toBase58()));
+      console.log(userSolBalance);
 
-      const adminAta = findAssociatedTokenPda(umiAdminSigner, {
-        owner: umiAdminSigner.identity.publicKey,
+      const adminAta = findAssociatedTokenPda(umi, {
+        owner: umi.identity.publicKey,
         mint: tokenManager!.quoteMint,
       });
 
-      const userAta = findAssociatedTokenPda(umiAdminSigner, {
+      const userAta = findAssociatedTokenPda(umi, {
         owner: publicKey(wallet.publicKey!.toBase58()),
         mint: tokenManager!.quoteMint,
       });
@@ -370,24 +371,24 @@ export const useSold = () => {
 
       if (userSolBalance.basisPoints < 100000000) {
         toast("Requesting SOL");
-        txBuilder = txBuilder.add(transferSol(umiAdminSigner, {
-          destination: umiAdminSigner.identity.publicKey,
+        txBuilder = txBuilder.add(transferSol(umi, {
+          destination: publicKey(wallet.publicKey!.toBase58()),
           amount: createAmount(0.1 * 10 ** 9, "SOL", 9),
         }));
       }
 
-      const userAtaAcc = await safeFetchToken(umiAdminSigner, userAta);
+      const userAtaAcc = await safeFetchToken(umi, userAta);
 
       if (!userAtaAcc) {
         txBuilder = txBuilder.add(
-          createAssociatedToken(umiAdminSigner, {
+          createAssociatedToken(umi, {
             mint: tokenManager!.quoteMint,
             owner: publicKey(wallet.publicKey!.toBase58()),
           }),
         );
       }
 
-      txBuilder = txBuilder.add(transferTokensChecked(umiAdminSigner, {
+      txBuilder = txBuilder.add(transferTokensChecked(umi, {
         source: adminAta,
         destination: userAta,
         amount: devnetFaucetAmount * 10 ** tokenManager.quoteMintDecimals,
@@ -395,7 +396,7 @@ export const useSold = () => {
         mint: tokenManager.quoteMint,
       }))
 
-      const res = await txBuilder.sendAndConfirm(umiAdminSigner, { confirm: { commitment: "finalized" } });
+      const res = await txBuilder.sendAndConfirm(umi, { confirm: { commitment: "finalized" } });
       console.log(bs58.encode(res.signature));
       toast("Minted devnet USDC");
     } catch (error) {
@@ -403,6 +404,7 @@ export const useSold = () => {
       toast.error("Failed to handle mint devnet USDC");
     } finally {
       setDevnetFaucetLoading(false);
+      umi = umi.use(walletAdapterIdentity(wallet));
       refetch();
     }
   }
