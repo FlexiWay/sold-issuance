@@ -45,7 +45,7 @@ export default function MainComponent() {
                 <input
                   type="number"
                   id="usdcAmount"
-                  className="w-full p-2 border rounded"
+                  className="w-full input bg-[#1B1E24] pr-6 py-6 relative"
                   placeholder="Enter amount"
                   onChange={(e) => setDevnetFaucetAmount(parseInt(e.target.value))}
                   value={devnetFaucetAmount}

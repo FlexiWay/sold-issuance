@@ -26,9 +26,10 @@ import {
   safeFetchToken,
   createAssociatedToken,
   transferTokensChecked,
+  transferSol
 } from "@metaplex-foundation/mpl-toolbox";
 import { toast } from "sonner";
-import { TransactionBuilder, createAmount } from "@metaplex-foundation/umi";
+import { TransactionBuilder, createAmount, keypairIdentity, publicKey } from "@metaplex-foundation/umi";
 // @ts-ignore
 import bs58 from "bs58";
 
@@ -65,7 +66,7 @@ export const useSold = () => {
   const wallet = useWallet();
   const { connection } = useConnection();
 
-  const umi = createUmi(connection);
+  let umi = createUmi(connection);
   umi.programs.add(createSplAssociatedTokenProgram());
   umi.programs.add(createSplTokenProgram());
 
@@ -351,38 +352,42 @@ export const useSold = () => {
       setDevnetFaucetLoading(true);
 
       const adminKp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(process.env.NEXT_PUBLIC_DEVNET_KP!)));
+      const umiAdminSigner = umi.use(keypairIdentity(adminKp));
 
-      const userSolBalance = await umi.rpc.getBalance(umi.identity.publicKey);
+      const userSolBalance = await umiAdminSigner.rpc.getBalance(umiAdminSigner.identity.publicKey);
 
-      if (userSolBalance.basisPoints < 100000000) {
-        toast.error("Requesting SOL");
-        await umi.rpc.airdrop(umi.identity.publicKey, createAmount(100_000 * 10 ** 9, "SOL", 9), { commitment: "finalized" });
-      }
-
-      const adminAta = findAssociatedTokenPda(umi, {
-        owner: adminKp.publicKey,
+      const adminAta = findAssociatedTokenPda(umiAdminSigner, {
+        owner: umiAdminSigner.identity.publicKey,
         mint: tokenManager!.quoteMint,
       });
 
-      const userAta = findAssociatedTokenPda(umi, {
-        owner: umi.identity.publicKey,
+      const userAta = findAssociatedTokenPda(umiAdminSigner, {
+        owner: publicKey(wallet.publicKey!.toBase58()),
         mint: tokenManager!.quoteMint,
       });
 
       let txBuilder = new TransactionBuilder();
 
-      const userAtaAcc = await safeFetchToken(umi, userAta);
+      if (userSolBalance.basisPoints < 100000000) {
+        toast("Requesting SOL");
+        txBuilder = txBuilder.add(transferSol(umiAdminSigner, {
+          destination: umiAdminSigner.identity.publicKey,
+          amount: createAmount(0.1 * 10 ** 9, "SOL", 9),
+        }));
+      }
+
+      const userAtaAcc = await safeFetchToken(umiAdminSigner, userAta);
 
       if (!userAtaAcc) {
         txBuilder = txBuilder.add(
-          createAssociatedToken(umi, {
+          createAssociatedToken(umiAdminSigner, {
             mint: tokenManager!.quoteMint,
-            owner: umi.identity.publicKey,
+            owner: publicKey(wallet.publicKey!.toBase58()),
           }),
         );
       }
 
-      txBuilder = txBuilder.add(transferTokensChecked(umi, {
+      txBuilder = txBuilder.add(transferTokensChecked(umiAdminSigner, {
         source: adminAta,
         destination: userAta,
         amount: devnetFaucetAmount * 10 ** tokenManager.quoteMintDecimals,
@@ -390,7 +395,7 @@ export const useSold = () => {
         mint: tokenManager.quoteMint,
       }))
 
-      const res = await txBuilder.sendAndConfirm(umi, { confirm: { commitment: "finalized" } });
+      const res = await txBuilder.sendAndConfirm(umiAdminSigner, { confirm: { commitment: "finalized" } });
       console.log(bs58.encode(res.signature));
       toast("Minted devnet USDC");
     } catch (error) {
@@ -398,6 +403,7 @@ export const useSold = () => {
       toast.error("Failed to handle mint devnet USDC");
     } finally {
       setDevnetFaucetLoading(false);
+      refetch();
     }
   }
 
