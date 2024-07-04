@@ -68,13 +68,13 @@ export default function MainComponent() {
           {/* tabs */}
           <div className="w-full flex items-center justify-between">
             <div
-              className={`w-1/2 flex items-center justify-center p-4  text-white rounded-tl-lg  hover:bg-opacity-40 cursor-pointer ${leftTab ? "bg-[#0B0D0F] font-black" : "bg-[#060708] font-semibold hover:font-black"} ease-in-out transition-all duration-300`}
+              className={`w-1/2 flex items-center justify-center p-4  text-white rounded-tl-lg  hover:bg-opacity-40 cursor-pointer border border-opacity-80 ${leftTab ? "bg-[#0B0D0F] font-black  border-brand-first rounded-t-lg" : "bg-[#060708] font-semibold hover:font-black border-transparent hover:border-brand-first hover:rounded-t-lg hover:border-opacity-50"} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(true)}
             >
               Mint
             </div>
             <div
-              className={`w-1/2 flex items-center justify-center p-4   text-white rounded-tr-lg  hover:bg-opacity-40 cursor-pointer ${!leftTab ? "bg-[#0B0D0F] font-black" : "bg-[#060708] font-semibold hover:font-black"} ease-in-out transition-all duration-300`}
+              className={`w-1/2 flex items-center justify-center p-4   text-white rounded-tr-lg  hover:bg-opacity-40 cursor-pointer border border-opacity-80 ${!leftTab ? "bg-[#0B0D0F] font-black  border-brand-first rounded-t-lg" : "bg-[#060708] font-semibold hover:font-black border-transparent hover:border-brand-first hover:rounded-t-lg hover:border-opacity-50"} ease-in-out transition-all duration-300`}
               onClick={() => setLeftTab(false)}
             >
               Redeem
@@ -190,7 +190,7 @@ export default function MainComponent() {
                   <input
                     type="number"
                     disabled
-                    className="w-full input text-end bg-[#1B1E24] px-16 pr-6 py-6 pb-10 relative !text-opacity-80 !text-transparent"
+                    className="w-full input text-end !bg-[#1B1E24] !border-transparent px-16 pr-6 py-6 pb-10 relative !text-opacity-80 !text-transparent"
                     placeholder=""
                     value={amount}
                   />
@@ -365,7 +365,7 @@ export default function MainComponent() {
                     <input
                       type="number"
                       disabled
-                      className="w-full input text-end bg-[#1B1E24] px-16 pr-6 py-6 pb-10 relative !text-opacity-80 !text-transparent"
+                      className="w-full input text-end !bg-[#1B1E24] !border-transparent px-16 pr-6 py-6 pb-10 relative !text-opacity-80 !text-transparent"
                       placeholder=""
                       value={amount}
                     />
