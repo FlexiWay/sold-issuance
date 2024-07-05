@@ -13,6 +13,8 @@ import {
   redeem,
   getMerkleProof,
   SOLD_ISSUANCE_PROGRAM_ID,
+  fetchTokenManager,
+  fetchPoolManager,
 } from "@builderz/sold";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
@@ -24,6 +26,7 @@ import {
   SPL_ASSOCIATED_TOKEN_PROGRAM_ID,
   findAssociatedTokenPda,
   safeFetchToken,
+  fetchMint,
   createAssociatedToken,
   transferTokensChecked,
   transferSol
@@ -79,34 +82,41 @@ export const useSold = () => {
     const fetchState = async () => {
       setLoading(true);
 
-      const tokenManagerAcc = await safeFetchTokenManager(
-        umi,
-        tokenManagerPubKey,
-      );
-      const poolManagerAcc = await safeFetchPoolManager(umi, poolManagerPubKey);
+      try {
+        const tokenManagerAcc = await fetchTokenManager(
+          umi,
+          tokenManagerPubKey,
+        );
+        const poolManagerAcc = await fetchPoolManager(umi, poolManagerPubKey);
+        const pusdAccount = await fetchMint(umi, tokenManagerAcc.mint);
 
-      console.log(tokenManagerAcc);
-      console.log(poolManagerAcc);
+        console.log(tokenManagerAcc);
+        console.log(poolManagerAcc);
+        console.log(pusdAccount);
 
-      setTokenManager(tokenManagerAcc);
-      setPoolManager(poolManagerAcc);
+        setTokenManager(tokenManagerAcc);
+        setPoolManager(poolManagerAcc);
 
-      // Stat stat cards
-      tokenManagerAcc &&
-        setStatCardData({
-          totalSupply: bigIntToFloat(
-            tokenManagerAcc.totalSupply,
-            tokenManagerAcc.mintDecimals,
-          ),
-          usdcInPool: bigIntToFloat(
-            tokenManagerAcc.totalCollateral,
-            tokenManagerAcc.quoteMintDecimals,
-          ),
-          totalStaked: 0,
-          xSoldSupply: 0,
-        });
-
-      setLoading(false);
+        // Stat stat cards
+        tokenManagerAcc && pusdAccount &&
+          setStatCardData({
+            totalSupply: bigIntToFloat(
+              pusdAccount.supply,
+              pusdAccount.decimals,
+            ),
+            usdcInPool: bigIntToFloat(
+              tokenManagerAcc.totalCollateral,
+              tokenManagerAcc.quoteMintDecimals,
+            ),
+            totalStaked: 0,
+            xSoldSupply: 0,
+          });
+      } catch (error) {
+        console.error("Failed to fetch state:", error);
+        toast.error("Failed to fetch state");
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (wallet.publicKey) {
